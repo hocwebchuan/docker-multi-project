@@ -1,0 +1,20 @@
+version: "3"
+services:
+  projectname01-webserver:
+    image: webdevops/php-apache-dev:7.4-alpine #replace 7.4 to the version you need.
+    container_name: projectname01 #container name
+    environment:
+      - PHP_DISPLAY_ERRORS=1
+      - PHP_DATE_TIMEZONE=Asia/Ho_Chi_Minh #Change to your timezone area
+      - WEB_DOCUMENT_ROOT=/app/public
+    networks:
+      - docker-net
+    volumes:
+      - ".:/app"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.projectname01-webserver.rule=Host(`projectname01.spa`)" #projectname01.spa: change to your domain
+      - "traefik.http.routers.projectname01-webserver.entrypoints=web"
+networks:
+  docker-net:
+    external: true

@@ -1,0 +1,68 @@
+version: "3"
+services:
+  db:
+    image: mysql
+    container_name: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Secret@12345
+    ports:
+      - "3306:3306"
+    networks:
+      - docker-net
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+  # phpmyadmin:
+  #     image: phpmyadmin/phpmyadmin
+  #     container_name: phpmyadmin
+  #     restart: always
+  #     ports:
+  #       - "9090:80"
+  #     environment:
+  #       PMA_HOST: db
+  #       PMA_ARBITRARY: 1
+  #     networks:
+  #       - docker-net
+  adminer:
+      image: adminer
+      container_name: adminer
+      restart: always
+      environment:
+        ADMINER_DEFAULT_SERVER: db
+      ports:
+        - "9091:8080"
+      networks:
+        - docker-net
+  reverse-proxy:
+    image: traefik
+    container_name: traefik
+    command:
+      # - "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    restart: always
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    networks:
+      - docker-net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  nodejs:
+    image: node:lts-alpine3.12
+    container_name: node
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    networks:
+      - docker-net
+    volumes:
+      - /home/duonghc:/app
+networks:
+  docker-net:
+    external: true
