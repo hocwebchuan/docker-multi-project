@@ -28,16 +28,16 @@ Assume that you have successfully installed docker before.
 ### Create image of services:
 ```
 cd /docker/base.services/
-docker-compose -up -d
+docker-compose up -d
 ```
 
 ### Create webserver of each container
 ```
 cd /project-name-01/
-docker-compose -up -d
+docker-compose up -d
 
 cd /project-name-02/
-docker-compose -up -d
+docker-compose up -d
 ```
 Start container
 ```
